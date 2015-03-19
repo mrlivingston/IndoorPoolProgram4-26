@@ -314,7 +314,7 @@ public class Enrollment extends javax.swing.JFrame {
         jLabel29.setText("17");
         jLabel29.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
 
-        jLabel2.setText("REMOVE ME");
+        jLabel2.setText("REMOVE ME2");
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
