@@ -7,17 +7,48 @@ package AppPackage;
 
 //import javax.swing.JOptionPane;
 
+import javax.swing.JOptionPane;
+import javax.swing.JTable;
+import javax.swing.table.DefaultTableModel;
+import java.sql.*;
+import java.util.Vector;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import net.proteanit.sql.DbUtils;
+import java.awt.*;
+
 /**
  
  * @author Nathan
  */
 public class StartGUI extends javax.swing.JFrame {
 
+    Connection conn = null;
+    ResultSet rs = null;
+    Statement st = null;
+    String s;
+    int selectedProgramID;
+    int selectedPatronID;
+    
     /**
      * Creates new form StartGUI
      */
     public StartGUI() {
         initComponents();
+        
+        /**Object rowData[][] = { { "Row1-Column1", "Row1-Column2", "Row1-Column3" },
+        { "Row2-Column1", "Row2-Column2", "Row2-Column3" } };
+        Object columnsSection[] = {"Section ID", "Program Name", "Start Time", "End Time", "Days", "Program Capacit"};
+        
+        DefaultTableModel tableSectionModel =(DefaultTableModel) tableSection.getModel();
+        
+        tableSectionModel.addRow(new Object[]{"value1", "value2", "value3", "value4", "value5", "value6"});
+        tableSectionModel.setDataVector(rowData, columnsSection);
+        **/
+       // Object columnsProgram[] = {"Program ID", "Program Name", "Description"};
+       // DefaultTableModel table2 =(DefaultTableModel) tableProgram.getModel();
+        //table2.addRow(new Object[]{"value1", "value2", "value3", "value4", "value5", "value6"});
+        //table2.setDataVector(rowData, columnsProgram);
     }
 
     /**
@@ -31,13 +62,33 @@ public class StartGUI extends javax.swing.JFrame {
 
         jSeparator1 = new javax.swing.JSeparator();
         jMenuItem5 = new javax.swing.JMenuItem();
-        jLabel1 = new javax.swing.JLabel();
+        tabbedPane = new javax.swing.JTabbedPane();
+        jPanel2 = new javax.swing.JPanel();
+        jScrollPane5 = new javax.swing.JScrollPane();
+        tblProgram = new javax.swing.JTable();
+        btnSelectProgram = new javax.swing.JButton();
+        btnAddProgram = new javax.swing.JButton();
+        jButton1 = new javax.swing.JButton();
+        jPanel3 = new javax.swing.JPanel();
+        jScrollPane6 = new javax.swing.JScrollPane();
+        tblPatron = new javax.swing.JTable();
+        btnAddPatron = new javax.swing.JButton();
+        btnSelectPatron = new javax.swing.JButton();
+        cboFirstName = new javax.swing.JComboBox();
+        jLabel3 = new javax.swing.JLabel();
+        cboLastName = new javax.swing.JComboBox();
+        jLabel4 = new javax.swing.JLabel();
+        jButton3 = new javax.swing.JButton();
+        lblAlart = new javax.swing.JLabel();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenu1 = new javax.swing.JMenu();
-        jMenuItem1 = new javax.swing.JMenuItem();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        menuNew = new javax.swing.JMenu();
+        menuSection = new javax.swing.JMenuItem();
+        menuProgram = new javax.swing.JMenuItem();
+        menuPatron = new javax.swing.JMenuItem();
+        menuEmployee = new javax.swing.JMenuItem();
+        jSeparator2 = new javax.swing.JPopupMenu.Separator();
+        menuSearch = new javax.swing.JMenuItem();
         jMenu2 = new javax.swing.JMenu();
         jMenu3 = new javax.swing.JMenu();
 
@@ -45,40 +96,279 @@ public class StartGUI extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Main");
-        getContentPane().setLayout(new org.netbeans.lib.awtextra.AbsoluteLayout());
 
-        jLabel1.setText("Program Name Here");
-        getContentPane().add(jLabel1, new org.netbeans.lib.awtextra.AbsoluteConstraints(80, 80, -1, -1));
+        tabbedPane.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tabbedPaneMouseClicked(evt);
+            }
+        });
+        tabbedPane.addComponentListener(new java.awt.event.ComponentAdapter() {
+            public void componentShown(java.awt.event.ComponentEvent evt) {
+                tabbedPaneComponentShown(evt);
+            }
+        });
+
+        tblProgram.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null},
+                {null, null, null},
+                {null, null, null},
+                {null, null, null}
+            },
+            new String [] {
+                "ID", "Program Name", "Description"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblProgram.setMaximumSize(new java.awt.Dimension(2147483647, 100));
+        tblProgram.setMinimumSize(new java.awt.Dimension(44, 64));
+        tblProgram.setName("tblProgram"); // NOI18N
+        tblProgram.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblProgram.getTableHeader().setReorderingAllowed(false);
+        jScrollPane5.setViewportView(tblProgram);
+        tblProgram.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        if (tblProgram.getColumnModel().getColumnCount() > 0) {
+            tblProgram.getColumnModel().getColumn(0).setResizable(false);
+            tblProgram.getColumnModel().getColumn(0).setPreferredWidth(4);
+            tblProgram.getColumnModel().getColumn(1).setResizable(false);
+            tblProgram.getColumnModel().getColumn(1).setPreferredWidth(80);
+            tblProgram.getColumnModel().getColumn(2).setResizable(false);
+            tblProgram.getColumnModel().getColumn(2).setPreferredWidth(250);
+        }
+
+        btnSelectProgram.setText("Select Program");
+        btnSelectProgram.setName("btnSelectProgram"); // NOI18N
+        btnSelectProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectProgramActionPerformed(evt);
+            }
+        });
+
+        btnAddProgram.setText("Add Program");
+        btnAddProgram.setName("btnAddProgram"); // NOI18N
+        btnAddProgram.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddProgramActionPerformed(evt);
+            }
+        });
+
+        jButton1.setText("Refresh");
+        jButton1.setName("btnRefresh"); // NOI18N
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
+        jPanel2.setLayout(jPanel2Layout);
+        jPanel2Layout.setHorizontalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane5, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton1)
+                .addGap(18, 18, 18)
+                .addComponent(btnAddProgram)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(btnSelectProgram)
+                .addContainerGap())
+        );
+        jPanel2Layout.setVerticalGroup(
+            jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel2Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnSelectProgram)
+                    .addComponent(btnAddProgram)
+                    .addComponent(jButton1))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jScrollPane5, javax.swing.GroupLayout.PREFERRED_SIZE, 338, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        tabbedPane.addTab("Program", jPanel2);
+
+        tblPatron.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null},
+                {null, null, null, null, null, null, null}
+            },
+            new String [] {
+                "ID", "First Name", "Last Name", "Address", "City", "State", "Zip"
+            }
+        ) {
+            boolean[] canEdit = new boolean [] {
+                false, false, false, false, false, false, false
+            };
+
+            public boolean isCellEditable(int rowIndex, int columnIndex) {
+                return canEdit [columnIndex];
+            }
+        });
+        tblPatron.setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        tblPatron.getTableHeader().setReorderingAllowed(false);
+        jScrollPane6.setViewportView(tblPatron);
+        tblPatron.getColumnModel().getSelectionModel().setSelectionMode(javax.swing.ListSelectionModel.SINGLE_SELECTION);
+        if (tblPatron.getColumnModel().getColumnCount() > 0) {
+            tblPatron.getColumnModel().getColumn(0).setResizable(false);
+            tblPatron.getColumnModel().getColumn(0).setPreferredWidth(4);
+            tblPatron.getColumnModel().getColumn(1).setResizable(false);
+            tblPatron.getColumnModel().getColumn(1).setPreferredWidth(80);
+            tblPatron.getColumnModel().getColumn(2).setResizable(false);
+            tblPatron.getColumnModel().getColumn(2).setPreferredWidth(250);
+            tblPatron.getColumnModel().getColumn(3).setResizable(false);
+            tblPatron.getColumnModel().getColumn(3).setPreferredWidth(80);
+            tblPatron.getColumnModel().getColumn(4).setResizable(false);
+            tblPatron.getColumnModel().getColumn(4).setPreferredWidth(70);
+            tblPatron.getColumnModel().getColumn(5).setResizable(false);
+            tblPatron.getColumnModel().getColumn(5).setPreferredWidth(5);
+            tblPatron.getColumnModel().getColumn(6).setResizable(false);
+            tblPatron.getColumnModel().getColumn(6).setPreferredWidth(6);
+        }
+
+        btnAddPatron.setText("Add Patron");
+        btnAddPatron.setName("btnAddPatron"); // NOI18N
+        btnAddPatron.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAddPatronActionPerformed(evt);
+            }
+        });
+
+        btnSelectPatron.setText("Select Patron");
+        btnSelectPatron.setName("btnSelectPatron"); // NOI18N
+        btnSelectPatron.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSelectPatronActionPerformed(evt);
+            }
+        });
+
+        cboFirstName.setName("cboFirstName"); // NOI18N
+        cboFirstName.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboFirstNameActionPerformed(evt);
+            }
+        });
+
+        jLabel3.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel3.setText("First Name");
+        jLabel3.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        cboLastName.setName("cboLastName"); // NOI18N
+        cboLastName.addItemListener(new java.awt.event.ItemListener() {
+            public void itemStateChanged(java.awt.event.ItemEvent evt) {
+                cboLastNameItemStateChanged(evt);
+            }
+        });
+
+        jLabel4.setHorizontalAlignment(javax.swing.SwingConstants.RIGHT);
+        jLabel4.setText("Last Name");
+        jLabel4.setHorizontalTextPosition(javax.swing.SwingConstants.RIGHT);
+
+        jButton3.setText("Refresh");
+        jButton3.setName("btnRefreshPatron"); // NOI18N
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout jPanel3Layout = new javax.swing.GroupLayout(jPanel3);
+        jPanel3.setLayout(jPanel3Layout);
+        jPanel3Layout.setHorizontalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(jScrollPane6, javax.swing.GroupLayout.DEFAULT_SIZE, 560, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jLabel3, javax.swing.GroupLayout.PREFERRED_SIZE, 58, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, 88, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jLabel4)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(cboLastName, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jButton3, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btnAddPatron, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btnSelectPatron)
+                .addContainerGap())
+        );
+        jPanel3Layout.setVerticalGroup(
+            jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(jPanel3Layout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(jPanel3Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cboFirstName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel4)
+                    .addComponent(cboLastName, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(btnSelectPatron)
+                    .addComponent(btnAddPatron))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jButton3)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(jScrollPane6, javax.swing.GroupLayout.PREFERRED_SIZE, 306, javax.swing.GroupLayout.PREFERRED_SIZE))
+        );
+
+        tabbedPane.addTab("Patron", jPanel3);
 
         jMenu1.setText("File");
 
-        jMenuItem1.setText("Add Program");
-        jMenuItem1.setInheritsPopupMenu(true);
-        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+        menuNew.setText("New");
+
+        menuSection.setText("Section");
+        menuSection.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem1ActionPerformed(evt);
+                menuSectionActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem1);
+        menuNew.add(menuSection);
 
-        jMenuItem2.setText("Add Course");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        menuProgram.setText("Program");
+        menuProgram.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                menuProgramActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        menuNew.add(menuProgram);
 
-        jMenuItem3.setText("Add Patron");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        menuPatron.setText("Patron");
+        menuPatron.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                menuPatronActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        menuNew.add(menuPatron);
 
-        jMenuItem4.setText("Add Employee");
-        jMenu1.add(jMenuItem4);
+        menuEmployee.setText("Employee");
+        menuEmployee.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuEmployeeActionPerformed(evt);
+            }
+        });
+        menuNew.add(menuEmployee);
+
+        jMenu1.add(menuNew);
+        jMenu1.add(jSeparator2);
+
+        menuSearch.setText("Search");
+        menuSearch.setInheritsPopupMenu(true);
+        menuSearch.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                menuSearchActionPerformed(evt);
+            }
+        });
+        jMenu1.add(menuSearch);
 
         jMenuBar1.add(jMenu1);
 
@@ -90,34 +380,270 @@ public class StartGUI extends javax.swing.JFrame {
 
         setJMenuBar(jMenuBar1);
 
-        setSize(new java.awt.Dimension(266, 289));
+        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
+        getContentPane().setLayout(layout);
+        layout.setHorizontalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addComponent(tabbedPane)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(85, 85, 85)
+                .addComponent(lblAlart, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGap(172, 172, 172))
+        );
+        layout.setVerticalGroup(
+            layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(lblAlart, javax.swing.GroupLayout.DEFAULT_SIZE, 23, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(tabbedPane))
+        );
+
+        pack();
         setLocationRelativeTo(null);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+    private void menuSearchActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSearchActionPerformed
         // TODO add your handling code here:
-        new Program().setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_jMenuItem1ActionPerformed
+    }//GEN-LAST:event_menuSearchActionPerformed
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void menuSectionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuSectionActionPerformed
         // TODO add your handling code here:
-        new Course().setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+        new Section().setVisible(true);
+    }//GEN-LAST:event_menuSectionActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void menuProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuProgramActionPerformed
+        // TODO add your handling code here:
+        addProgram();
+    }//GEN-LAST:event_menuProgramActionPerformed
+
+    private void menuEmployeeActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuEmployeeActionPerformed
         // TODO add your handling code here:
         new Person().setVisible(true);
-        setVisible(false);
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_menuEmployeeActionPerformed
+
+    private void menuPatronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuPatronActionPerformed
+        // TODO add your handling code here:
+        addPatron();
+    }//GEN-LAST:event_menuPatronActionPerformed
+
+    private void tabbedPaneComponentShown(java.awt.event.ComponentEvent evt) {//GEN-FIRST:event_tabbedPaneComponentShown
+        // TODO add your handling code here:
+    }//GEN-LAST:event_tabbedPaneComponentShown
+
+    private void btnSelectPatronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectPatronActionPerformed
+        // TODO add your handling code here:
+       if (tblPatron.getSelectedRow() == -1)
+        {
+            lblAlart.setText("Choose a patron to view");
+        }
+        else
+        {
+            Person newPerson = new Person();
+            newPerson.setVisible(true);
+           // selectedPatronID = newProgram.view(Integer.valueOf((String)tblProgram.getValueAt(tblProgram.getSelectedRow(), 0)), String.valueOf((String)tblProgram.getValueAt(tblProgram.getSelectedRow(), 1)));
+            selectedPatronID = (int) tblPatron.getValueAt(tblPatron.getSelectedRow(), 0);
+            System.out.println(selectedPatronID);
+        }
+    }//GEN-LAST:event_btnSelectPatronActionPerformed
+
+    private void btnAddPatronActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddPatronActionPerformed
+        // TODO add your handling code here:
+        addPatron();
+    }//GEN-LAST:event_btnAddPatronActionPerformed
+
+    private void btnAddProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAddProgramActionPerformed
+        // TODO add your handling code here:
+        addProgram();
+    }//GEN-LAST:event_btnAddProgramActionPerformed
+
+    private void btnSelectProgramActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelectProgramActionPerformed
+        // TODO add your handling code here:
+        if (tblProgram.getSelectedRow() == -1)
+        {
+            lblAlart.setText("Choose a program to view");
+        }
+        else
+        {
+            Program newProgram = new Program();
+            newProgram.setVisible(true);
+            selectedProgramID = (int) tblProgram.getValueAt(tblProgram.getSelectedRow(), 0);
+            
+            try
+        {
+           Class.forName("com.mysql.jdbc.Driver");
+            conn=DriverManager.getConnection("jdbc:mysql:///bipprogrammanager","root","javaclass1!");
+          //  String query = "SELECT * FROM PROGRAM WHERE programID = "+ selectedProgramID +"";
+            String programIDString;
+            int programID;
+            
+            ResultSet rs;
+                rs = conn.createStatement().executeQuery("SELECT * FROM PROGRAM WHERE programID = "+ selectedProgramID +"");
+                ResultSet rs2;
+               
+            while(rs.next())
+            {
+            String name = rs.getString("programName");
+            String programDescription = rs.getString("description");
+            programID = rs.getInt("programID");
+           programIDString = String.valueOf(programID);
+            
+            Program.txtName.setText(name);
+            Program.txtDescription.setText(programDescription);
+            Program.lblProgID.setText(programIDString);
+            
+            newProgram.txtDescription.setEditable(false);
+           // newProgram.txtDescription.setBackground(Color.GRAY);
+            newProgram.txtName.setEditable(false);
+           // newProgram.txtName.setBackground(Color.GRAY);
+ 
+            try
+            {
+            rs2 = conn.createStatement().executeQuery("SELECT sectionID, season, year, session, startDate, endDate FROM SECTION WHERE programID = "+ Integer.parseInt(programIDString));
+            newProgram.tblSection.setModel(DbUtils.resultSetToTableModel(rs2));
+            }
+             catch(SQLException e)
+             {
+                 JOptionPane.showMessageDialog(null, e);
+             }
+        }
+       
+            
+            
+            
+            
+            
+            
+        }
+        catch(ClassNotFoundException | SQLException e)
+        {
+           // JOptionPane.showMessageDialog(null, e);
+            e.printStackTrace();
+        }
+        }
+    }//GEN-LAST:event_btnSelectProgramActionPerformed
+
+    
+    
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        // TODO add your handling code here:
+        
+         try
+        {
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            conn=DriverManager.getConnection("jdbc:mysql:///bipprogrammanager","root","javaclass1!");
+            String query = "SELECT patronID, patronFirstName, patronLastName, patronAddress, patronCity, patronPhone  from PATRON";
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            tblPatron.setModel(DbUtils.resultSetToTableModel(rs));
+        }
+        catch(ClassNotFoundException | SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        // TODO add your handling code here:
+        
+        try
+        {
+           Class.forName("com.mysql.jdbc.Driver");
+            conn=DriverManager.getConnection("jdbc:mysql:///bipprogrammanager","root","javaclass1!");
+            String query = "SELECT *  from PROGRAM";
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            tblProgram.setModel(DbUtils.resultSetToTableModel(rs));
+        }
+        catch(ClassNotFoundException | SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void tabbedPaneMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabbedPaneMouseClicked
+        // TODO add your handling code here:
+        
+        try
+        {
+            StartGUI start = new StartGUI();
+            Class.forName("com.mysql.jdbc.Driver");
+            conn=DriverManager.getConnection("jdbc:mysql:///bipprogrammanager","root","javaclass1!");
+            String query = "SELECT DISTINCT patronLastName from PATRON";
+            PreparedStatement pst = conn.prepareStatement(query);
+            ResultSet rs = pst.executeQuery();
+            while (rs.next())
+            {
+                
+            String lastName = rs.getString("patronLastName");
+            cboLastName.addItem(lastName);
+                
+            }
+        }
+        catch(ClassNotFoundException | SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+        
+        
+        
+    }//GEN-LAST:event_tabbedPaneMouseClicked
+
+    private void cboFirstNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboFirstNameActionPerformed
+        // TODO add your handling code here:
+        
+        
+        
+    }//GEN-LAST:event_cboFirstNameActionPerformed
+
+    private void cboLastNameItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_cboLastNameItemStateChanged
+    
+        // TODO add your handling code here:
+        
+        String selectedLast, selectedFirst, blank;
+            
+            cboFirstName.removeAllItems();
+           selectedLast = cboLastName.getSelectedItem().toString();
+           
+                 
+                       try
+                        {
+            
+            Class.forName("com.mysql.jdbc.Driver");
+            conn=DriverManager.getConnection("jdbc:mysql:///bipprogrammanager","root","javaclass1!");
+            String query = "SELECT patronID, patronFirstName, patronLastName, patronAddress, patronCity, patronPhone  from PATRON WHERE patronLastName = '"+ selectedLast +"'";
+            String query2 = "SELECT patronFirstName from PATRON WHERE patronLastName = '"+selectedLast+"'";
+            PreparedStatement pst = conn.prepareStatement(query);
+            PreparedStatement pst2 = conn.prepareStatement(query2);
+
+           ResultSet rs = pst.executeQuery();
+            tblPatron.setModel(DbUtils.resultSetToTableModel(rs));
+            ResultSet rs2 = pst2.executeQuery();
+            
+            while(rs2.next())
+                    {
+                     String firstName = rs2.getString("patronFirstName");
+                     cboFirstName.addItem(firstName);
+                   }
+        }
+        catch(ClassNotFoundException | SQLException e)
+        {
+            JOptionPane.showMessageDialog(null, e);
+        }
+                   
+        
+    }//GEN-LAST:event_cboLastNameItemStateChanged
 
     /**
      * @param args the command line arguments
      */
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
-        //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
+        
+    //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
         /* If Nimbus (introduced in Java SE 6) is not available, stay with the default look and feel.
          * For details see http://download.oracle.com/javase/tutorial/uiswing/lookandfeel/plaf.html 
          */
@@ -138,7 +664,8 @@ public class StartGUI extends javax.swing.JFrame {
             java.util.logging.Logger.getLogger(StartGUI.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
         }
         //</editor-fold>
-
+        //Person form = new Person();
+        
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
@@ -146,18 +673,50 @@ public class StartGUI extends javax.swing.JFrame {
             }
         });
     }
-
+    
+    public static void addProgram()
+    {
+        Program newProgram = new Program();
+        newProgram.setVisible(true);
+        newProgram.edit();
+    }
+    public static void addPatron()
+    {
+        Person newPerson = new Person();
+        newPerson.setVisible(true);
+        newPerson.edit();
+    }
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JLabel jLabel1;
+    private javax.swing.JButton btnAddPatron;
+    private javax.swing.JButton btnAddProgram;
+    private javax.swing.JButton btnSelectPatron;
+    private javax.swing.JButton btnSelectProgram;
+    private javax.swing.JComboBox cboFirstName;
+    private javax.swing.JComboBox cboLastName;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JLabel jLabel3;
+    private javax.swing.JLabel jLabel4;
     private javax.swing.JMenu jMenu1;
     private javax.swing.JMenu jMenu2;
     private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
-    private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
     private javax.swing.JMenuItem jMenuItem5;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JScrollPane jScrollPane5;
+    private javax.swing.JScrollPane jScrollPane6;
     private javax.swing.JSeparator jSeparator1;
+    private javax.swing.JPopupMenu.Separator jSeparator2;
+    private javax.swing.JLabel lblAlart;
+    private javax.swing.JMenuItem menuEmployee;
+    private javax.swing.JMenu menuNew;
+    private javax.swing.JMenuItem menuPatron;
+    private javax.swing.JMenuItem menuProgram;
+    private javax.swing.JMenuItem menuSearch;
+    private javax.swing.JMenuItem menuSection;
+    private javax.swing.JTabbedPane tabbedPane;
+    private javax.swing.JTable tblPatron;
+    private javax.swing.JTable tblProgram;
     // End of variables declaration//GEN-END:variables
 }
